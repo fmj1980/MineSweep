@@ -106,4 +106,15 @@
 {
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:mineCount] forKey:@"MINECOUNT"];
 }
+
+-(int)mineSize
+{
+    int size = [[[NSUserDefaults standardUserDefaults]objectForKey:@"MINESIZE"] intValue];
+    return size == 0?35:size;
+}
+
+-(void)setMineSize:(int)mineSize
+{
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:mineSize] forKey:@"MINESIZE"];
+}
 @end

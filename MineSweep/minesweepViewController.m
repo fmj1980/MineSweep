@@ -17,7 +17,6 @@
     bool _autoSelectMines[40][40];
     bool _mines[40][40];
     BOOL _started;
-    int _mineViewSize;
     CGFloat _lastScale;
     NSTimer* _timer;
     int _startSeconds;
@@ -32,7 +31,6 @@
 
 - (void)viewDidLoad
 {
-    _mineViewSize = MINE_SIZE;
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     [(UIImageView*)self.view setImage:[UIImage imageNamed:@"bg"]];
@@ -50,7 +48,7 @@
     [self showTime];
     
     [self initMineViews];
-    self.scrollVIew.contentSize = CGSizeMake(_mineViewSize*MINE_COLUMNCOUNT+40, _mineViewSize*MINE_ROWCOUNT +40);
+    self.scrollVIew.contentSize = CGSizeMake(MINE_SIZE*MINE_COLUMNCOUNT+40, MINE_SIZE*MINE_ROWCOUNT +40);
 }
 -(void)initMineViews
 {
@@ -59,7 +57,7 @@
     }
     for(int i = 0; i < MINE_ROWCOUNT; i++) {
         for(int j = 0; j < MINE_COLUMNCOUNT; j++) {
-            CGRect rect = CGRectMake( _mineViewSize*j+10 , _mineViewSize*i+10, _mineViewSize, _mineViewSize);
+            CGRect rect = CGRectMake( MINE_SIZE*j+10 , MINE_SIZE*i+10, MINE_SIZE, MINE_SIZE);
             MineView *view = [[MineView alloc] initWithFrame:rect];
             view.tag = CONTROL_TAG(i,j);
             view.enabled = YES;
@@ -76,11 +74,11 @@
     for(int i = 0; i < MINE_ROWCOUNT; i++) {
         for(int j = 0; j < MINE_COLUMNCOUNT; j++) {
             MineView* view = (MineView*)[self.scrollVIew viewWithTag:CONTROL_TAG(i, j)];
-            CGRect rect = CGRectMake( _mineViewSize*j , _mineViewSize*i, _mineViewSize, _mineViewSize);
+            CGRect rect = CGRectMake( MINE_SIZE*j , MINE_SIZE*i, MINE_SIZE, MINE_SIZE);
             view.frame = rect;
         }
     }
-    self.scrollVIew.contentSize = CGSizeMake(_mineViewSize*MINE_COLUMNCOUNT+40, _mineViewSize*MINE_ROWCOUNT +40);
+    self.scrollVIew.contentSize = CGSizeMake(MINE_SIZE*MINE_COLUMNCOUNT+40, MINE_SIZE*MINE_ROWCOUNT +40);
 }
 -(void)initMines:(int)xcoord ycoord:(int)ycoord
 {
@@ -210,19 +208,19 @@
 }
 -(IBAction)zoomInClicked:(id)sender
 {
-    if (_mineViewSize*1.1>60) {
+    if (MINE_SIZE*1.1>60) {
         return;
     }
-    _mineViewSize = _mineViewSize*1.1;
+    APP_CONFIG.mineSize = MINE_SIZE*1.1;
     [self resizeMineViews];
 }
 
 -(IBAction)zoomOutClicked:(id)sender
 {
-    if (_mineViewSize*0.9<25 ) {
+    if (MINE_SIZE*0.9<25 ) {
         return;
     }
-    _mineViewSize = _mineViewSize*0.9;
+    APP_CONFIG.mineSize = MINE_SIZE*0.9;
     [self resizeMineViews];
 }
 -(IBAction)pinkHandler:(UIPinchGestureRecognizer *)recognizer
@@ -231,10 +229,10 @@
         _lastScale = 1.0;
     }
     CGFloat scale = 1.0 - (_lastScale - [(UIPinchGestureRecognizer*)recognizer scale]);
-    if (_mineViewSize*scale<25 || _mineViewSize*scale>50) {
+    if (MINE_SIZE*scale<25 || MINE_SIZE*scale>50) {
         return;
     }
-    _mineViewSize = _mineViewSize*scale;
+    APP_CONFIG.mineSize = MINE_SIZE*scale;
     [self resizeMineViews];
     _lastScale = [(UIPinchGestureRecognizer*)recognizer scale];
     
@@ -274,19 +272,17 @@
     if ( !_started ) {
         [self startGameAt:view];
     }
+    //如果点中的周围没有雷，则自动显示周围的数据
+    if ( view.aroundMines == 0 ){
+        memset(_autoSelectMines, 0, sizeof(_autoSelectMines));
+         NSLog(@"开始自动扫雷%f",[[NSDate date] timeIntervalSinceReferenceDate]);
+        [self sweepAutoFinished:view];
+         NSLog(@"自动扫雷结束%f",[[NSDate date] timeIntervalSinceReferenceDate]);
+    }
+    
     if ([self isWin]) {
         [self gameWin];
-        return;
     }
-    //如果点中的周围没有雷，则自动显示周围的数据
-    if ( view.aroundMines != 0 )
-        return;
-    
-    memset(_autoSelectMines, 0, sizeof(_autoSelectMines));
-    
-     NSLog(@"开始自动扫雷%f",[[NSDate date] timeIntervalSinceReferenceDate]);
-    [self sweepAutoFinished:view];
-     NSLog(@"自动扫雷结束%f",[[NSDate date] timeIntervalSinceReferenceDate]);
 }
 
 -(void)mineMarked:(MineView*)view
@@ -312,22 +308,19 @@
             marked++;
         }
     }
-    if ( marked>= view.aroundMines ) {
-        for (MineView* subView in arry) {
-            if (subView.status == MINE_STATUS_NONE) {
-                if (subView.isMine) {
-                    [self gameOver];
-                }
-                else
-                {
-                    [subView doAutoSelect];
-                }
+    if ( marked< view.aroundMines )
+        return;
+    for (MineView* subView in arry) {
+        if (subView.status == MINE_STATUS_NONE) {
+            if (subView.isMine) {
+                [self gameOver]; //周围有标记错误的雷，自动扫雷失败
+                return;
             }
+            [subView doAutoSelect];
         }
     }
     if ([self isWin]) {
         [self gameWin];
-        return;
     }
 }
 
@@ -350,6 +343,5 @@
             }
         }
     }
-   
 }
 @end

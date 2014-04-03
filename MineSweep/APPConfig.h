@@ -34,9 +34,10 @@ typedef NS_ENUM(NSInteger,MINE_GAMETYPE)
 @property(readonly,nonatomic) int customRowCount;
 @property(readonly,nonatomic) int customColumCount;
 @property(readonly,nonatomic) int customMineCount;
+@property(nonatomic) int mineSize;
 @end
 #define APP_CONFIG [APPConfig instance]
-#define MINE_SIZE  35
+#define MINE_SIZE  [APPConfig instance].mineSize
 #define MINE_ROWCOUNT [APPConfig instance].rowCount
 #define MINE_COLUMNCOUNT [APPConfig instance].columCount
 #define MINE_COUNT [APPConfig instance].mineCount
