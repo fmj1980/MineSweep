@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A03CB8EE18ED3B630045059E /* Main_ipad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A03CB8EC18ED3B630045059E /* Main_ipad.storyboard */; };
 		A0AFD3BA18E2B2560033C881 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AFD3B918E2B2560033C881 /* Foundation.framework */; };
 		A0AFD3BC18E2B2560033C881 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AFD3BB18E2B2560033C881 /* CoreGraphics.framework */; };
 		A0AFD3BE18E2B2560033C881 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AFD3BD18E2B2560033C881 /* UIKit.framework */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A03CB8ED18ED3B630045059E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_ipad.storyboard; sourceTree = "<group>"; };
 		A0AFD3B618E2B2560033C881 /* MineSweep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MineSweep.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0AFD3B918E2B2560033C881 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A0AFD3BB18E2B2560033C881 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -125,6 +127,7 @@
 				A0AFD3F518E2DB8C0033C881 /* View */,
 				A0AFD3F418E2DB7E0033C881 /* Model */,
 				A0AFD3CB18E2B2560033C881 /* Main.storyboard */,
+				A03CB8EC18ED3B630045059E /* Main_ipad.storyboard */,
 				A0AFD3D118E2B2560033C881 /* Images.xcassets */,
 				A0AFD3C018E2B2560033C881 /* Supporting Files */,
 			);
@@ -269,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A0AFD3D218E2B2560033C881 /* Images.xcassets in Resources */,
+				A03CB8EE18ED3B630045059E /* Main_ipad.storyboard in Resources */,
 				A0AFD3C418E2B2560033C881 /* InfoPlist.strings in Resources */,
 				A0AFD3CD18E2B2560033C881 /* Main.storyboard in Resources */,
 			);
@@ -317,6 +321,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		A03CB8EC18ED3B630045059E /* Main_ipad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A03CB8ED18ED3B630045059E /* Base */,
+			);
+			name = Main_ipad.storyboard;
+			sourceTree = "<group>";
+		};
 		A0AFD3C218E2B2560033C881 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -422,7 +434,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MineSweep/MineSweep-Prefix.pch";
 				INFOPLIST_FILE = "MineSweep/MineSweep-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -435,7 +449,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MineSweep/MineSweep-Prefix.pch";
 				INFOPLIST_FILE = "MineSweep/MineSweep-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
