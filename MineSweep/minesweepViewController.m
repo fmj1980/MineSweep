@@ -14,6 +14,8 @@
 
 @interface minesweepViewController ()
 {
+    bool _autoSelectMines[40][40];
+    bool _mines[40][40];
     BOOL _started;
     int _mineViewSize;
     CGFloat _lastScale;
@@ -80,36 +82,45 @@
     }
     self.scrollVIew.contentSize = CGSizeMake(_mineViewSize*MINE_COLUMNCOUNT+40, _mineViewSize*MINE_ROWCOUNT +40);
 }
--(void)initMines:(NSArray*)exclusives
+-(void)initMines:(int)xcoord ycoord:(int)ycoord
 {
     NSLog(@"初始化雷%f",[[NSDate date] timeIntervalSinceReferenceDate]);
-    bool mines[MINE_ROWCOUNT][MINE_COLUMNCOUNT];
-    memset(mines, 0, sizeof(mines));
+    memset(_mines, 0, sizeof(_mines));
     //随机初始化雷
     int mineCount = MINE_COUNT;
     while ( mineCount >0 ) {
         int x = arc4random()%MINE_ROWCOUNT;
         int y = arc4random()%MINE_COLUMNCOUNT;
+        //如果已经是雷了 则继续随机处理
+        if (_mines[x][y]) {
+            continue;
+        }
         //保证第一次点击的View周围没有雷，降低游戏的难度
         BOOL exclusive = NO;
-        for (MineView* view in exclusives) {
-            if (view.x == x && view.y == y) {
-                exclusive = YES;
-                break;
+        for (int i=xcoord-1;i-xcoord<=1;i++) {
+            if(exclusive) break;
+            for (int j=ycoord-1; j-ycoord<=1; j++) {
+                if (i==x && j == y) {
+                    exclusive = YES;
+                    break;
+                }
             }
         }
         if (exclusive) {
             continue;
         }
+        
+        _mines[x][y]=true;
         MineView* view = (MineView*)[self.scrollVIew viewWithTag:CONTROL_TAG(x,y)];
-        if ( view.isMine) {
-            continue;
-        }
-        mines[x][y]=true;
         view.isMine = YES;
         mineCount--;
     }
     NSLog(@"初始化雷结束%f",[[NSDate date] timeIntervalSinceReferenceDate]);
+}
+
+-(void)initMineCounts
+{
+    NSLog(@"开始计算每个View周围雷的个数%f",[[NSDate date] timeIntervalSinceReferenceDate]);
     //计算每个View周围有几颗雷 优化完成
     for(MineView *subView in [self.scrollVIew subviews]){
         int x = subView.x;
@@ -121,17 +132,17 @@
             for (int j=y-1; j-y<=1; j++) {
                 if (j<0) continue;
                 if (j>=MINE_COLUMNCOUNT)continue;
-                if (mines[i][j]) count++;
+                if (_mines[i][j]) count++;
             }
         }
         subView.aroundMines = count;
     }
-    NSLog(@"计算雷的个数结束%f",[[NSDate date] timeIntervalSinceReferenceDate]);
+    NSLog(@"计算每个View周围雷的个数结束%f",[[NSDate date] timeIntervalSinceReferenceDate]);
 }
-
 -(void)startGameAt:(MineView*)view
 {
-    [self initMines:[self arroundView:view]];
+    [self initMines:view.x ycoord:view.y];
+    [self initMineCounts];
     _started = YES;
     _startSeconds = 0;
     _timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(onTimer:) userInfo:nil repeats:YES];
@@ -270,9 +281,12 @@
     //如果点中的周围没有雷，则自动显示周围的数据
     if ( view.aroundMines != 0 )
         return;
-    for (MineView* subView in [self arroundView:view]) {
-        [subView doAutoSelect];
-    }
+    
+    memset(_autoSelectMines, 0, sizeof(_autoSelectMines));
+    
+     NSLog(@"开始自动扫雷%f",[[NSDate date] timeIntervalSinceReferenceDate]);
+    [self sweepAutoFinished:view];
+     NSLog(@"自动扫雷结束%f",[[NSDate date] timeIntervalSinceReferenceDate]);
 }
 
 -(void)mineMarked:(MineView*)view
@@ -289,6 +303,8 @@
 
 -(void)autoSweepMine:(MineView*)view
 {
+    memset(_autoSelectMines, 0, sizeof(_autoSelectMines));
+    
     int marked = 0;
     NSArray* arry = [self arroundView:view];
     for (MineView* subView in arry) {
@@ -309,6 +325,31 @@
             }
         }
     }
+    if ([self isWin]) {
+        [self gameWin];
+        return;
+    }
 }
 
+-(void)sweepAutoFinished:(MineView*)view
+{
+    if ( view.aroundMines != 0 )
+        return;
+    for (int i=view.x-1;i-view.x<=1;i++) {
+        if (i<0) continue;
+        if (i>=MINE_ROWCOUNT)continue;
+        for (int j=view.y-1; j-view.y<=1; j++) {
+            if (j<0) continue;
+            if (j>=MINE_COLUMNCOUNT)continue;
+            if (_mines[i][j]) continue;
+            if (_autoSelectMines[i][j]) continue;
+            _autoSelectMines[i][j] = YES;
+            MineView* view = (MineView*)[self.scrollVIew viewWithTag:CONTROL_TAG(i,j)];
+            if (view) {
+                [view doAutoSelect];
+            }
+        }
+    }
+   
+}
 @end

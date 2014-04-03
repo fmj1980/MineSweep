@@ -46,12 +46,14 @@ typedef NS_ENUM(NSInteger,MINE_STATUS)
 @end
 
 @protocol MineViewDelegate <NSObject>
+//长按，标记为雷,或者取消标记雷
+-(void)mineMarked:(MineView*)view;
 //点击，踩到雷了
 -(void)sweepFailed:(MineView*)view;
 //点击，没有踩到雷
 -(void)sweepSuccessed:(MineView*)view;
 //当前已经确认不是雷，点击自动计算周围的雷
 -(void)autoSweepMine:(MineView*)view;
-//长按，标记为雷,或者取消标记雷
--(void)mineMarked:(MineView*)view;
+//自动扫雷完成，需要继续递归扫雷
+-(void)sweepAutoFinished:(MineView*)view;
 @end

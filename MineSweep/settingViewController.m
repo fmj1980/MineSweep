@@ -12,6 +12,7 @@
 {
     NSArray* arryTypeNames;
     NSArray* arryCustomName;
+    NSArray* arryTypeDescrptions;
     UISlider* widthSlider;
     UISlider* heightSlider;
     UISlider* minesSlider;
@@ -32,15 +33,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
     arryTypeNames = [[NSArray alloc] initWithObjects:@"初级", @"中级", @"高级", @"自定义",nil];
-    arryCustomName = [[NSArray alloc] initWithObjects:@"宽度", @"高度", @"地雷", nil];
+    arryTypeDescrptions= @[ @"9*9,10雷",@"16*16,40雷",@"16*30,99雷"];
+    arryCustomName = [[NSArray alloc] initWithObjects:@"宽度", @"高度", @"地雷", nil];    
 }
 
 - (void)didReceiveMemoryWarning
@@ -95,22 +90,16 @@
         UISlider* slider = (UISlider*)[cell viewWithTag:101];
         lblTitle.text = [arryCustomName objectAtIndex:indexPath.row];
         if (indexPath.row == 0) {
-            if (widthSlider == nil) {
-                widthSlider = slider;
-            }
+            if (widthSlider == nil) widthSlider = slider;
             slider.value = MINE_ROWCOUNT;
         }
         else if(indexPath.row == 1 )
         {
-            if (heightSlider == nil) {
-                heightSlider = slider;
-            }
+            if (heightSlider == nil) heightSlider = slider;
             slider.value = MINE_COLUMNCOUNT;
         }
         else if (indexPath.row == 2 ) {
-            if (minesSlider == nil) {
-                minesSlider = slider;
-            }
+            if(minesSlider == nil) minesSlider = slider;
             slider.value = MINE_COUNT;
         }
     }
@@ -119,24 +108,18 @@
 
 -(NSString*)typeDescription:(MINE_GAMETYPE)type
 {
-    if (type == MINE_GAMETYPE_10) {
-        return [NSString stringWithFormat:@"%@",@"9*9,10雷"];
+    if (type != MINE_GAMETYPE_CUSTOM) {
+        return [arryTypeDescrptions objectAtIndex:type];
     }
-    if (type == MINE_GAMETYPE_40) {
-        return [NSString stringWithFormat:@"%@",@"16*16,40雷"];
-    }
-    if (type == MINE_GAMETYPE_99) {
-        return [NSString stringWithFormat:@"%@",@"16*30,99雷"];
-    }
-    return [NSString stringWithFormat:@"%d*%d,%d雷",MINE_ROWCOUNT,MINE_COLUMNCOUNT,MINE_COUNT];
+    return [NSString stringWithFormat:@"%d*%d,%d雷",APP_CONFIG.customRowCount,APP_CONFIG.customColumCount,APP_CONFIG.customMineCount];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
-    if (section == 0) {
-        return @"";
+    if (section == 1) {
+        return @"自定义设置";
     }
-    return @"自定义设置";
+    return nil;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -170,60 +153,13 @@
     {
         APP_CONFIG.mineCount = (int)slider.value;
     }
-    minesSlider.maximumValue = MINE_COLUMNCOUNT*MINE_ROWCOUNT/4.0;
+    minesSlider.maximumValue = MINE_COLUMNCOUNT*MINE_ROWCOUNT/2.0;
     if ( APP_CONFIG.mineCount> minesSlider.maximumValue) {
         APP_CONFIG.mineCount = minesSlider.maximumValue;
     }
 
     [self.tableView reloadData];
 }
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

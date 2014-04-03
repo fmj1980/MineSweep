@@ -196,17 +196,11 @@
     if (self.status != MINE_STATUS_NONE ) {
         return;
     }
-    if (self.isMine)
-    {
-        NSLog(@"怎么可能是一颗雷？ must be some wrong!");
-        return;
-    }
     self.status = MIME_STATUS_NOMINE;
     [self showStatusImage:self.status];
     [self showMineState];
     //递归继续操作
-    [self.delegate sweepSuccessed:self];
-    
+    [self.delegate sweepAutoFinished:self];
 }
 
 @end

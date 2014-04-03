@@ -42,10 +42,14 @@
     {
         return 16;
     }
+    return [self customRowCount];
+}
+
+-(int)customRowCount
+{
     int count = [[[NSUserDefaults standardUserDefaults]objectForKey:@"ROWCOUNT"] intValue];
     return count == 0?9:count;
 }
-
 -(void)setRowCount:(int)rowCount
 {
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:rowCount] forKey:@"ROWCOUNT"];
@@ -64,10 +68,13 @@
     {
         return 30;
     }
+    return self.customColumCount;
+}
+-(int)customColumCount
+{
     int count = [[[NSUserDefaults standardUserDefaults]objectForKey:@"COLUMNCOUNT"] intValue];
     return count == 0?9:count;
 }
-
 -(void)setColumCount:(int)columCount
 {
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:columCount] forKey:@"COLUMNCOUNT"];
@@ -86,6 +93,11 @@
     {
         return 99;
     }
+    return self.customMineCount;
+}
+
+-(int)customMineCount
+{
     int count = [[[NSUserDefaults standardUserDefaults]objectForKey:@"MINECOUNT"] intValue];
     return count == 0?10:count;
 }
